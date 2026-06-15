@@ -4,13 +4,21 @@ import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { orderAPI } from "@/lib/api"
 import { Header } from "@/components/layout/header"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Pagination } from "@/components/ui/pagination"
+import { Eye } from "lucide-react"
+import {
+  OrderDetailsModal,
+  StatusBadge,
+} from "@/components/modals/order-details-modal"
 import { useSession } from "next-auth/react"
 
 export default function OrdersPage() {
   const [page, setPage] = useState(1)
+  const [selectedOrder, setSelectedOrder] = useState<any>(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const limit = 10
   const { data: session } = useSession()
 
@@ -50,7 +58,9 @@ export default function OrdersPage() {
                       <tr className="border-b bg-gray-50">
                         <th className="text-left py-3 px-4 font-semibold">Product</th>
                         <th className="text-left py-3 px-4 font-semibold">Price</th>
+                        <th className="text-left py-3 px-4 font-semibold">Status</th>
                         <th className="text-left py-3 px-4 font-semibold">Delivery Date</th>
+                        <th className="text-left py-3 px-4 font-semibold">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -67,7 +77,23 @@ export default function OrdersPage() {
                             {order.products?.[0]?.product?.name}
                           </td>
                           <td className="py-3 px-4">${order.totalPrice}</td>
+                          <td className="py-3 px-4">
+                            <StatusBadge status={order.status} />
+                          </td>
                           <td className="py-3 px-4">{new Date(order.createdAt).toLocaleDateString()}</td>
+                          <td className="py-3 px-4">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-orange-500 hover:text-orange-600"
+                              onClick={() => {
+                                setSelectedOrder(order)
+                                setIsDetailsOpen(true)
+                              }}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -85,6 +111,15 @@ export default function OrdersPage() {
           </CardContent>
         </Card>
       </div>
+
+      <OrderDetailsModal
+        order={selectedOrder}
+        open={isDetailsOpen}
+        onOpenChange={(open) => {
+          setIsDetailsOpen(open)
+          if (!open) setSelectedOrder(null)
+        }}
+      />
     </div>
   )
 }
