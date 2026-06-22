@@ -10,11 +10,12 @@ const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000/api"
 const createAxios = (token?: string, extra?: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({
     baseURL,
+    ...extra,
     headers: {
       "Content-Type": "application/json",
+      ...(extra?.headers || {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    ...extra,
   })
 
   // OPTIONAL: surface backend error messages consistently
@@ -107,6 +108,33 @@ export const categoryAPI = {
   deleteCategory: async (id: string, token: string) => {
     const http = createAxios(token)
     return http.delete(`/category/${id}`)
+  },
+}
+
+// -------------------- Service Category APIs --------------------
+export const serviceCategoryAPI = {
+  getServiceCategories: async (token: string) => {
+    const http = createAxios(token)
+    return http.get("/our-services/admin/all")
+  },
+
+  createServiceCategory: async (data: FormData, token: string) => {
+    const http = createAxios(token, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    return http.post("/our-services", data)
+  },
+
+  updateServiceCategory: async (id: string, data: FormData, token: string) => {
+    const http = createAxios(token, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    return http.put(`/our-services/${id}`, data)
+  },
+
+  deleteServiceCategory: async (id: string, token: string) => {
+    const http = createAxios(token)
+    return http.delete(`/our-services/${id}`)
   },
 }
 

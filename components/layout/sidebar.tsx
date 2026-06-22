@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
   Package,
+  BriefcaseBusiness,
   ShoppingCart,
   TrendingUp,
   Users,
@@ -29,6 +30,11 @@ import Image from "next/image";
 const menuItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Categories", href: "/admin/categories", icon: Package },
+  {
+    label: "ServiceCategory",
+    href: "/admin/service-categories",
+    icon: BriefcaseBusiness,
+  },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { label: "Revenue from Seller", href: "/admin/revenue", icon: TrendingUp },
   { label: "Seller Management", href: "/admin/sellers", icon: Users },
